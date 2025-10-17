@@ -13,16 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: education/autograding@v1
+      
+      - name: Autograding
+        uses: education/autograding@v1
         id: autograding
         with:
           points: 10
+          
       - name: Install pytest
         run: pip install pytest
+        
       - name: Run tests
-        run: pytest
+        run: pytest --json-report
         id: tests
+        continue-on-error: true
+        
       - name: Report results
-        uses: education/autograding/actions/reporter@v1
+        uses: classroom-resources/autograding-reporter@v1
         with:
-          test-results: "${{ steps.tests.outputs.results }}"
+          test-results: "${{ steps.tests.outputs.report }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
