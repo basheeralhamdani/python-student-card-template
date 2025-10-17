@@ -1,19 +1,28 @@
-name: Autograding
-on: [push, workflow_dispatch]
+name: GitHub Classroom Workflow
+
+on: [push]
+
 permissions:
   checks: write
   actions: read
   contents: read
+
 jobs:
-  run-autograding:
+  build:
+    name: Autograding
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: education/autograding@v1
         id: autograding
         with:
-          test_name: 'Run Tests'
-          setup_command: 'pip install pytest'
-          test_command: 'pytest'
-          timeout: 10
-          max_score: 10
+          points: 10
+      - name: Install pytest
+        run: pip install pytest
+      - name: Run tests
+        run: pytest
+        id: tests
+      - name: Report results
+        uses: education/autograding/actions/reporter@v1
+        with:
+          test-results: "${{ steps.tests.outputs.results }}"
