@@ -1,0 +1,19 @@
+name: Autograding
+on: [push, workflow_dispatch]
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: education/autograding@v1
+        id: autograding
+        with:
+          test_name: 'Run Tests'
+          setup_command: 'pip install pytest'
+          test_command: 'pytest'
+          timeout: 10
+          max_score: 10
